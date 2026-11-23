@@ -1,3 +1,4 @@
+
 # Python environments
 .venv/
 venv/
@@ -34,9 +35,12 @@ dist/
 *.log
 *.tmp
 
-# Experiment tracking generated locally
+# Experiment tracking runtime files
 mlruns/
 wandb/
+
+# Download caches (reproducible from acquisition scripts)
+data/external/20newsgroups_cache/
 
 # Operating system files
 .DS_Store

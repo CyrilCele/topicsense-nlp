@@ -1,0 +1,36 @@
+{
+    "dataset": "20 Newsgroups",
+    "source": "scikit-learn fetch_20newsgroups",
+    "source_url": "https://scikit-learn.org/stable/datasets/real_world.html#the-20-newsgroups-text-dataset",
+    "task_type": "multiclass_text_classification",
+    "number_of_classes": 20,
+    "classes": [
+        "alt.atheism",
+        "comp.graphics",
+        "comp.os.ms-windows.misc",
+        "comp.sys.ibm.pc.hardware",
+        "comp.sys.mac.hardware",
+        "comp.windows.x",
+        "misc.forsale",
+        "rec.autos",
+        "rec.motorcycles",
+        "rec.sport.baseball",
+        "rec.sport.hockey",
+        "sci.crypt",
+        "sci.electronics",
+        "sci.med",
+        "sci.space",
+        "soc.religion.christian",
+        "talk.politics.guns",
+        "talk.politics.mideast",
+        "talk.politics.misc",
+        "talk.religion.misc"
+    ],
+    "split_counts": {
+        "train": 11314,
+        "test": 7532
+    },
+    "total_documents": 18846,
+    "text_modified_during_acquisition": false,
+    "note": "Original text is preserved. Check dataset rights and licensing before redistribution."
+}
