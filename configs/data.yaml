@@ -1,0 +1,37 @@
+project:
+  name: topicsense-nlp
+  random_seed: 42
+
+dataset:
+  name: 20newsgroups
+  display_name: 20 Newsgroups
+  loader: sklearn.datasets.fetch_20newsgroups
+
+  source_url: "https://people.csail.mit.edu/jrennie/20Newsgroups/"
+
+  # Scikit-learn downloads and caches the original dataset here.
+  cache_dir: "data/raw/20newsgroups/cache"
+
+  # Our unmodified acquisition output.
+  output_file: "data/raw/20newsgroups/20newsgroups_raw.jsonl"
+
+  manifest_file: "data/raw/20newsgroups/20newsgroups_manifest.json"
+
+  # Preserve original content, including headers, signatures and quotes.
+  remove: []
+
+  # Preserve the original date-based train/test partitions.
+  subsets:
+    - train
+    - test
+
+  shuffle: false
+
+  expected_classes: 20
+  expected_documents: 18846
+
+splitting:
+  validation_size: 0.20
+  random_seed: 42
+  stratify: true
+  preserve_official_test_set: true

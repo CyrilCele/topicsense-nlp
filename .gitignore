@@ -4,7 +4,7 @@
 venv/
 env/
 
-# Python cache
+# Python cache and compiled files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -39,8 +39,23 @@ dist/
 mlruns/
 wandb/
 
-# Download caches (reproducible from acquisition scripts)
+# Download caches
 data/external/20newsgroups_cache/
+
+# Raw, interim and processed datasets
+data/raw/
+data/interim/
+data/processed/
+
+# Generated model artifacts
+models/checkpoints/
+models/registry/
+
+# Generated experiment outputs
+results/metrics/
+results/figures/
+results/tables/
+results/logs/
 
 # Operating system files
 .DS_Store

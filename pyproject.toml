@@ -80,6 +80,13 @@ mypy_path = "src"
 warn_return_any = true
 warn_unused_configs = true
 
+[[tool.mypy.overrides]]
+module = [
+    "sklearn",
+    "sklearn.*",
+]
+ignore_missing_imports = true
+
 [tool.uv]
 default-groups = ["dev"]
 
