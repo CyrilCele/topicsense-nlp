@@ -1,7 +1,8 @@
+
 [project]
 name = "topicsense-nlp"
 version = "0.1.0"
-description = "A modular NLP system for supervised multi-domain text classification using classical machine learning and transformer-based deep learning."
+description = "A modular NLP research and application platform for supervised multi-domain text classification."
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -9,23 +10,46 @@ dependencies = [
     "pandas>=2.2",
     "scikit-learn>=1.6",
     "scipy>=1.13",
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+
+# Research, data science and machine learning
+research = [
     "matplotlib>=3.9",
     "seaborn>=0.13",
-    "pyyaml>=6.0",
     "torch>=2.15.0",
     "transformers>=4.47",
     "datasets>=3.2",
     "accelerate>=1.2",
     "optuna>=4.1",
-]
-
-[dependency-groups]
-dev = [
+    "sentence-transformers>=3.3",
+    "tqdm>=4.67",
+    "psutil>=6.1",
     "ipykernel>=6.29",
     "jupyterlab>=4.2",
+]
+
+# API, dashboard, database and experiment tracking
+app = [
+    "fastapi[standard]>=0.115",
+    "streamlit>=1.41",
+    "plotly>=6.0",
+    "mlflow>=2.19",
+    "sqlalchemy>=2.0",
+    "alembic>=1.14",
+    "psycopg[binary]>=3.2",
+    "pydantic-settings>=2.7",
+    "httpx>=0.28",
+]
+
+# Quality assurance and developer tooling
+dev = [
     "mypy>=1.14",
     "pytest>=8.3",
     "pytest-cov>=6.0",
+    "pytest-asyncio>=0.25",
     "ruff>=0.9",
 ]
 
@@ -40,6 +64,7 @@ packages = ["src/topicsense"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-ra"
+asyncio_mode = "auto"
 
 [tool.ruff]
 line-length = 88
@@ -54,6 +79,9 @@ python_version = "3.12"
 mypy_path = "src"
 warn_return_any = true
 warn_unused_configs = true
+
+[tool.uv]
+default-groups = ["dev"]
 
 [tool.uv.sources]
 torch = { index = "pytorch-cpu" }
