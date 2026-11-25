@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import csv
-import copy
 import json
 import random
 import tempfile
@@ -170,10 +169,11 @@ def _prepare_documents(
 
 def _predict(
     model: TextCNN,
-    data_loader: DataLoader[tuple[torch.Tensor, torch.Tensor]],
+    data_loader: DataLoader[tuple[torch.Tensor, ...]],
     *,
     device: torch.device,
 ) -> tuple[list[int], float]:
+    """Generate predictions and measure elapsed inference time."""
     model.eval()
     predictions: list[int] = []
 
@@ -476,7 +476,10 @@ def run_neural_experiments(
             epochs_without_improvement += 1
 
         if epochs_without_improvement >= patience:
-            print("Early stopping: validation macro F1 did not improve.")
+            print(
+                "Early stopping: validation macro F1 did not improve "
+                f"for {patience} consecutive epochs."
+            )
             break
 
     fit_seconds = time.perf_counter() - fit_start

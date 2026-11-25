@@ -81,7 +81,7 @@ class TextCNN(nn.Module):
 
         for convolution in self.convolutions:
             feature_maps = torch.relu(convolution(embedded))
-            pooled = torch.max(feature_maps, dim=2).values
+            pooled = torch.amax(feature_maps, dim=2)
             pooled_features.append(pooled)
 
         combined = torch.cat(pooled_features, dim=1)
