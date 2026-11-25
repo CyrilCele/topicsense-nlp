@@ -1,0 +1,41 @@
+project:
+  name: topicsense-nlp
+  random_seed: 42
+
+data:
+  raw_dataset_path: "data/raw/20newsgroups/20newsgroups_raw.jsonl"
+  split_manifest_path: "data/interim/20newsgroups/splits/official_training_split.json"
+
+preprocessing:
+  representation: "message_body"
+  lowercase: false
+
+vocabulary:
+  max_size: 30000
+  min_frequency: 2
+
+model:
+  embedding_dim: 64
+  num_filters: 64
+  kernel_sizes:
+    - 3
+    - 4
+    - 5
+  dropout: 0.5
+
+training:
+  epochs: 5
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  patience: 2
+  max_grad_norm: 1.0
+  max_sequence_length: 256
+  num_workers: 0
+  num_threads: 2
+  save_model: false
+  artifact_dir: "models/checkpoints/neural"
+
+outputs:
+  metrics_csv: "results/metrics/neural_networks.csv"
+  results_json: "results/logs/neural_networks.json"
