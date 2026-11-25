@@ -84,6 +84,8 @@ warn_unused_configs = true
 module = [
     "sklearn",
     "sklearn.*",
+    "joblib",
+    "joblib.*",
 ]
 ignore_missing_imports = true
 

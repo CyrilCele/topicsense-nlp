@@ -1,0 +1,50 @@
+project:
+  name: topicsense-nlp
+  random_seed: 42
+
+data:
+  raw_dataset_path: "data/raw/20newsgroups/20newsgroups_raw.jsonl"
+  split_manifest_path: "data/interim/20newsgroups/splits/official_training_split.json"
+
+preprocessing:
+  lowercase: false
+  representations:
+    - full_message
+    - message_body
+
+features:
+  types:
+    - count
+    - tfidf
+  ngram_range:
+    - 1
+    - 2
+  min_df: 2
+  max_df: 0.98
+  max_features: 100000
+  lowercase: false
+  sublinear_tf: false
+
+classifiers:
+  multinomial_nb:
+    enabled: true
+    alpha: 1.0
+
+  logistic_regression:
+    enabled: true
+    C: 1.0
+    solver: lbfgs
+    max_iter: 1000
+
+  linear_svm:
+    enabled: true
+    C: 1.0
+    max_iter: 5000
+
+training:
+  save_models: false
+  artifact_dir: "models/checkpoints/classical_ml"
+
+outputs:
+  metrics_csv: "results/metrics/classical_baselines.csv"
+  results_json: "results/logs/classical_baselines.json"
