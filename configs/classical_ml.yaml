@@ -39,7 +39,7 @@ classifiers:
   linear_svm:
     enabled: true
     C: 1.0
-    max_iter: 5000
+    max_iter: 20000
 
 training:
   save_models: false
