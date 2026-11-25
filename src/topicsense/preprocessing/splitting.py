@@ -99,11 +99,16 @@ def _build_training_groups(
         if not isinstance(members, list):
             raise ValueError("Each body-audit duplicate group must contain members.")
 
-        group_ids = [
-            member.get("record_id")
-            for member in members
-            if isinstance(member, dict) and member.get("record_id") in training_id_set
-        ]
+        group_ids: list[str] = []
+
+        for member in members:
+            if not isinstance(member, dict):
+                continue
+
+            record_id = member.get("record_id")
+
+            if isinstance(record_id, str) and record_id in training_id_set:
+                group_ids.append(record_id)
 
         if len(group_ids) > 1:
             for record_id in group_ids[1:]:
@@ -123,7 +128,12 @@ def _build_training_groups(
         left = pair.get("left_record_id")
         right = pair.get("right_record_id")
 
-        if left in training_id_set and right in training_id_set:
+        if (
+            isinstance(left, str)
+            and isinstance(right, str)
+            and left in training_id_set
+            and right in training_id_set
+        ):
             union_find.union(left, right)
             near_edges += 1
 
@@ -344,6 +354,11 @@ def create_preprocessing_splits(
         track_name="decontaminated_training",
     )
 
+    split_payloads: dict[str, dict[str, Any]] = {
+        "official_training": official_split,
+        "decontaminated_training": decontaminated_split,
+    }
+
     result = {
         "dataset": "20newsgroups",
         "random_seed": random_seed,
@@ -366,7 +381,9 @@ def create_preprocessing_splits(
             },
             "clean_test_sensitivity": {
                 "development_split": "official_training",
-                "evaluation_partition": "official test excluding clean_test_ids.json",
+                "evaluation_partition": (
+                    "official test excluding records listed in clean_test_ids.json"
+                ),
                 "clean_test_ids_path": "data/interim/20newsgroups/clean_test_ids.json",
             },
             "decontaminated_training_sensitivity": {
@@ -375,15 +392,12 @@ def create_preprocessing_splits(
                 "decontaminated_train_ids_path": str(decontaminated_train_ids_path),
             },
         },
-        "splits": {
-            "official_training": official_split,
-            "decontaminated_training": decontaminated_split,
-        },
+        "splits": split_payloads,
     }
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    for key, payload in result["splits"].items():
+    for key, payload in split_payloads.items():
         output_path = output_dir / f"{key}_split.json"
         output_path.write_text(
             json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
