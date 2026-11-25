@@ -1,4 +1,4 @@
-"""Reproducible TextCNN training and validation experiments."""
+"""Reproducible TextCNN and BiLSTM training and validation experiments."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
 from topicsense.evaluation.metrics import calculate_classification_metrics
-from topicsense.models.neural import TextCNN
+from topicsense.models.neural import BiLSTM, TextCNN
 from topicsense.preprocessing.text import preprocess_text, tokenize_words
 
 PAD_TOKEN = "<PAD>"
@@ -168,7 +168,7 @@ def _prepare_documents(
 
 
 def _predict(
-    model: TextCNN,
+    model: nn.Module,
     data_loader: DataLoader[tuple[torch.Tensor, ...]],
     *,
     device: torch.device,
@@ -231,7 +231,7 @@ def run_neural_experiments(
     *,
     project_root: Path,
 ) -> dict[str, Any]:
-    """Train and validate the configured TextCNN without using test records."""
+    """Train and validate a configured neural model without using test records."""
     data_config = config["data"]
     preprocessing_config = config["preprocessing"]
     vocabulary_config = config["vocabulary"]
@@ -333,12 +333,15 @@ def run_neural_experiments(
     )
 
     max_sequence_length = int(training_config["max_sequence_length"])
-    kernel_sizes = tuple(int(value) for value in model_config["kernel_sizes"])
+    architecture = str(model_config.get("architecture", "textcnn"))
 
-    if max_sequence_length < max(kernel_sizes):
-        raise ValueError(
-            "max_sequence_length must be at least the largest kernel size."
-        )
+    if architecture == "textcnn":
+        kernel_sizes = tuple(int(value) for value in model_config["kernel_sizes"])
+
+        if max_sequence_length < max(kernel_sizes):
+            raise ValueError(
+                "max_sequence_length must be at least the largest kernel size."
+            )
 
     X_train_encoded = encode_documents(
         X_train,
@@ -376,15 +379,38 @@ def run_neural_experiments(
         num_workers=0,
     )
 
-    model = TextCNN(
-        vocabulary_size=len(vocabulary),
-        num_classes=len(class_labels),
-        embedding_dim=int(model_config["embedding_dim"]),
-        num_filters=int(model_config["num_filters"]),
-        kernel_sizes=kernel_sizes,
-        dropout=float(model_config["dropout"]),
-        padding_index=PADDING_INDEX,
-    ).to(device)
+    if architecture == "textcnn":
+        model: nn.Module = TextCNN(
+            vocabulary_size=len(vocabulary),
+            num_classes=len(class_labels),
+            embedding_dim=int(model_config["embedding_dim"]),
+            num_filters=int(model_config["num_filters"]),
+            kernel_sizes=kernel_sizes,
+            dropout=float(model_config["dropout"]),
+            padding_index=PADDING_INDEX,
+        )
+
+        experiment_id = "EXP-04"
+        model_name = "TextCNN"
+
+    elif architecture == "bilstm":
+        model = BiLSTM(
+            vocabulary_size=len(vocabulary),
+            num_classes=len(class_labels),
+            embedding_dim=int(model_config["embedding_dim"]),
+            hidden_size=int(model_config["hidden_size"]),
+            num_layers=int(model_config["num_layers"]),
+            dropout=float(model_config["dropout"]),
+            padding_index=PADDING_INDEX,
+        )
+
+        experiment_id = "EXP-05"
+        model_name = "BiLSTM"
+
+    else:
+        raise ValueError(f"Unsupported neural architecture: {architecture!r}")
+
+    model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
 
@@ -509,10 +535,8 @@ def run_neural_experiments(
         "vocabulary": vocabulary,
         "class_labels": class_labels,
         "model_config": {
-            "embedding_dim": int(model_config["embedding_dim"]),
-            "num_filters": int(model_config["num_filters"]),
-            "kernel_sizes": list(kernel_sizes),
-            "dropout": float(model_config["dropout"]),
+            "architecture": architecture,
+            **model_config,
             "padding_index": PADDING_INDEX,
         },
         "max_sequence_length": max_sequence_length,
@@ -522,7 +546,7 @@ def run_neural_experiments(
     }
 
     artifact_dir = project_root / training_config["artifact_dir"]
-    run_id = f"textcnn__{representation}"
+    run_id = f"{architecture}__{representation}"
 
     if training_config.get("save_model", False):
         artifact_dir.mkdir(parents=True, exist_ok=True)
@@ -545,8 +569,8 @@ def run_neural_experiments(
 
     result = {
         "run_id": run_id,
-        "experiment_id": "EXP-04",
-        "model": "TextCNN",
+        "experiment_id": experiment_id,
+        "model": model_name,
         "representation": representation,
         "random_seed": random_seed,
         "training_documents": len(y_train),
@@ -570,8 +594,8 @@ def run_neural_experiments(
 
     summary_row = {
         "run_id": run_id,
-        "experiment_id": "EXP-04",
-        "model": "TextCNN",
+        "experiment_id": experiment_id,
+        "model": model_name,
         "representation": representation,
         "training_documents": len(y_train),
         "validation_documents": validation_count,

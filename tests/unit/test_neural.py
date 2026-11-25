@@ -9,7 +9,7 @@ from typing import Any
 import pytest
 import torch
 
-from topicsense.models.neural import TextCNN
+from topicsense.models.neural import BiLSTM, TextCNN
 from topicsense.training.neural import (
     build_vocabulary,
     encode_documents,
@@ -221,3 +221,49 @@ def test_neural_runner_uses_training_split_only(tmp_path: Path) -> None:
     assert payload["training_documents"] == 4
     assert payload["validation_documents"] == 2
     assert (tmp_path / "results/metrics/test_neural.csv").is_file()
+
+
+def test_bilstm_returns_class_scores() -> None:
+    """BiLSTM should return one score per class and input document."""
+
+    model = BiLSTM(
+        vocabulary_size=20,
+        num_classes=3,
+        embedding_dim=8,
+        hidden_size=4,
+        num_layers=1,
+        dropout=0.1,
+    )
+
+    input_ids = torch.tensor(
+        [
+            [2, 3, 4, 0, 0],
+            [5, 6, 7, 8, 0],
+            [9, 10, 11, 12, 13],
+        ],
+        dtype=torch.long,
+    )
+
+    output = model(input_ids)
+
+    assert output.shape == (3, 3)
+
+
+def test_bilstm_handles_empty_token_sequences() -> None:
+    """BiLSTM should handle sequences containing only padding tokens."""
+
+    model = BiLSTM(
+        vocabulary_size=20,
+        num_classes=3,
+        embedding_dim=8,
+        hidden_size=4,
+        num_layers=1,
+        dropout=0.1,
+    )
+
+    input_ids = torch.zeros((2, 5), dtype=torch.long)
+
+    output = model(input_ids)
+
+    assert output.shape == (2, 3)
+    assert torch.isfinite(output).all()

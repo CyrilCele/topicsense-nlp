@@ -1,4 +1,3 @@
-
 project:
   name: topicsense-nlp
   random_seed: 42
@@ -24,8 +23,14 @@ model:
     - 5
   dropout: 0.5
 
+bilstm:
+  embedding_dim: 64
+  hidden_size: 64
+  num_layers: 1
+  dropout: 0.3
+
 training:
-  epochs: 15
+  epochs: 25
   batch_size: 64
   learning_rate: 0.001
   weight_decay: 0.0001
@@ -38,5 +43,7 @@ training:
   artifact_dir: "models/checkpoints/neural"
 
 outputs:
-  metrics_csv: "results/metrics/neural_networks.csv"
-  results_json: "results/logs/neural_networks.json"
+  textcnn_metrics_csv: "results/metrics/neural_textcnn.csv"
+  textcnn_results_json: "results/logs/neural_textcnn.json"
+  bilstm_metrics_csv: "results/metrics/neural_bilstm.csv"
+  bilstm_results_json: "results/logs/neural_bilstm.json"

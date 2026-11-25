@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import torch
 from torch import nn
 
@@ -87,4 +89,4 @@ class TextCNN(nn.Module):
         combined = torch.cat(pooled_features, dim=1)
         combined = self.dropout(combined)
 
-        return self.classifier(combined)
+        return cast(torch.Tensor, self.classifier(combined))

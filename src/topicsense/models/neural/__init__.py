@@ -1,5 +1,6 @@
 """Neural-network model implementations."""
 
+from topicsense.models.neural.bilstm import BiLSTM
 from topicsense.models.neural.textcnn import TextCNN
 
-__all__ = ["TextCNN"]
+__all__ = ["BiLSTM", "TextCNN"]
