@@ -1,0 +1,27 @@
+project:
+  name: topicsense-nlp
+  random_seed: 42
+
+data:
+  dataset: "20newsgroups"
+  development_split: "data/interim/20newsgroups/splits/official_training_split.json"
+  expected_training_documents: 9051
+  expected_validation_documents: 2263
+  expected_class_count: 20
+
+inputs:
+  classical_results: "results/logs/classical_baselines.json"
+  textcnn_results: "results/logs/neural_textcnn.json"
+  bilstm_results: "results/logs/neural_bilstm.json"
+  distilbert_results: "results/logs/transformer_distilbert.json"
+  frozen_embeddings_results: "results/logs/transformer_frozen_embeddings.json"
+
+comparison:
+  primary_metric: "macro_f1"
+  require_test_data_excluded: true
+  expected_classical_run_count: 12
+  expected_total_runs: 16
+
+outputs:
+  comparison_metrics_csv: "results/metrics/model_comparison.csv"
+  comparison_results_json: "results/logs/model_comparison.json"
