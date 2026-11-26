@@ -1,0 +1,44 @@
+
+project:
+  name: topicsense-nlp
+  random_seed: 42
+
+data:
+  raw_dataset_path: "data/raw/20newsgroups/20newsgroups_raw.jsonl"
+  split_manifest_path: "data/interim/20newsgroups/splits/official_training_split.json"
+
+preprocessing:
+  representation: "message_body"
+  lowercase: false
+
+fine_tuning:
+  enabled: true
+  model_name: "distilbert-base-uncased"
+  max_sequence_length: 128
+  batch_size: 4
+  gradient_accumulation_steps: 2
+  epochs: 2
+  learning_rate: 0.00002
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  patience: 1
+  save_model: false
+  artifact_dir: "models/checkpoints/transformers/distilbert"
+  num_workers: 0
+
+frozen_embeddings:
+  enabled: true
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  batch_size: 16
+  normalize_embeddings: false
+  classifier:
+    C: 1.0
+    max_iter: 1000
+  save_model: false
+  artifact_dir: "models/checkpoints/transformers/frozen_embeddings"
+
+outputs:
+  distilbert_metrics_csv: "results/metrics/transformer_distilbert.csv"
+  distilbert_results_json: "results/logs/transformer_distilbert.json"
+  frozen_metrics_csv: "results/metrics/transformer_frozen_embeddings.csv"
+  frozen_results_json: "results/logs/transformer_frozen_embeddings.json"
