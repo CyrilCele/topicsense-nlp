@@ -371,3 +371,155 @@ def run_classical_experiments(
         "metrics_csv": str(metrics_path),
         "results_json": str(results_path),
     }
+
+
+def generate_validation_predictions(
+    config: dict[str, Any],
+    *,
+    project_root: Path,
+    classifier_name: str,
+    feature_type: str,
+    representation: str,
+    output_path: Path,
+) -> dict[str, Any]:
+    """Generate predictions for one classical model on the fixed validation split.
+
+    Only official training-partition records are loaded. The supplied split
+    manifest determines the training and validation IDs. Official test records
+    are never passed to the vectorizer, classifier or evaluator.
+    """
+    data_config = config["data"]
+    preprocessing_config = config["preprocessing"]
+    feature_config = config["features"]
+    classifier_config = config["classifiers"]
+
+    raw_path = project_root / data_config["raw_dataset_path"]
+    split_path = project_root / data_config["split_manifest_path"]
+
+    if not raw_path.is_file():
+        raise FileNotFoundError(raw_path)
+
+    if not split_path.is_file():
+        raise FileNotFoundError(split_path)
+
+    if classifier_name not in classifier_config:
+        raise ValueError(f"Unknown classifier: {classifier_name}")
+
+    classifier_settings = classifier_config[classifier_name]
+
+    if not classifier_settings.get("enabled", False):
+        raise ValueError(f"Classifier is not enabled: {classifier_name}")
+
+    if feature_type not in feature_config["types"]:
+        raise ValueError(f"Feature type is not configured: {feature_type}")
+
+    if representation not in preprocessing_config["representations"]:
+        raise ValueError(f"Representation is not configured: {representation}")
+
+    records_by_id = _load_training_records(raw_path)
+    split = _read_json(split_path)
+
+    training_ids = split.get("training_record_ids")
+    validation_ids = split.get("validation_record_ids")
+
+    if not isinstance(training_ids, list) or not isinstance(validation_ids, list):
+        raise ValueError("Split manifest must contain training and validation IDs.")
+
+    if not all(isinstance(value, str) for value in training_ids + validation_ids):
+        raise ValueError("All split record IDs must be strings.")
+
+    training_id_set = set(training_ids)
+    validation_id_set = set(validation_ids)
+
+    if not training_id_set or not validation_id_set:
+        raise ValueError("Training and validation partitions cannot be empty.")
+
+    if not training_id_set.isdisjoint(validation_id_set):
+        raise ValueError("Training and validation record IDs overlap.")
+
+    unknown_ids = (training_id_set | validation_id_set) - set(records_by_id)
+
+    if unknown_ids:
+        raise ValueError(
+            f"The split manifest contains {len(unknown_ids)} "
+            "IDs not found in the official training partition."
+        )
+
+    training_records = [records_by_id[value] for value in training_ids]
+    validation_records = [records_by_id[value] for value in validation_ids]
+
+    class_labels = sorted({record["label"] for record in training_records})
+    validation_labels = {record["label"] for record in validation_records}
+
+    if validation_labels != set(class_labels):
+        raise ValueError("Training and validation must contain the same class labels.")
+
+    lowercase = bool(preprocessing_config.get("lowercase", False))
+
+    X_train = [
+        preprocess_text(
+            record["text"],
+            representation=representation,
+            lowercase=lowercase,
+        )
+        for record in training_records
+    ]
+
+    X_validation = [
+        preprocess_text(
+            record["text"],
+            representation=representation,
+            lowercase=lowercase,
+        )
+        for record in validation_records
+    ]
+
+    y_train = [record["label"] for record in training_records]
+
+    vectorizer = build_vectorizer(feature_type, feature_config)
+    classifier = build_classifier(
+        classifier_name,
+        classifier_settings,
+        random_seed=int(config["project"]["random_seed"]),
+    )
+
+    pipeline = Pipeline(
+        steps=[
+            ("vectorizer", vectorizer),
+            ("classifier", classifier),
+        ]
+    )
+
+    pipeline.fit(X_train, y_train)
+    predictions = pipeline.predict(X_validation)
+
+    run_id = f"{classifier_name}__{feature_type}__{representation}"
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with output_path.open("w", encoding="utf-8", newline="\n") as file:
+        for record_id, record, prediction in zip(
+            validation_ids,
+            validation_records,
+            predictions,
+            strict=True,
+        ):
+            result = {
+                "record_id": record_id,
+                "actual_label": record["label"],
+                "predicted_label": str(prediction),
+            }
+
+            file.write(json.dumps(result, ensure_ascii=False) + "\n")
+
+    return {
+        "run_id": run_id,
+        "classifier": classifier_name,
+        "feature_type": feature_type,
+        "representation": representation,
+        "training_documents": len(training_records),
+        "validation_documents": len(validation_records),
+        "class_labels": class_labels,
+        "test_data_used": False,
+        "predictions_path": str(output_path),
+    }

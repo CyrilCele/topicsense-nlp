@@ -13,7 +13,6 @@ from topicsense.evaluation.comparison import (
     write_model_comparison,
 )
 
-
 CLASS_LABELS = ["science", "sports"]
 
 

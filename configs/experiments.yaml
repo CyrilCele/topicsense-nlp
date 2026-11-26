@@ -25,3 +25,20 @@ comparison:
 outputs:
   comparison_metrics_csv: "results/metrics/model_comparison.csv"
   comparison_results_json: "results/logs/model_comparison.json"
+
+error_analysis:
+  classical_config: "configs/classical_ml.yaml"
+
+  selected_run:
+    classifier: "linear_svm"
+    feature_type: "tfidf"
+    representation: "full_message"
+
+  max_examples_per_confusion_pair: 3
+
+  outputs:
+    predictions_jsonl: "results/logs/error_analysis_predictions.jsonl"
+    summary_json: "results/logs/error_analysis.json"
+    per_class_csv: "results/tables/error_analysis_per_class.csv"
+    confusion_pairs_csv: "results/tables/error_analysis_confusion_pairs.csv"
+    examples_csv: "results/tables/error_analysis_misclassified_examples.csv"
