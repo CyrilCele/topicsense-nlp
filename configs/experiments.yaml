@@ -4,7 +4,7 @@ project:
 
 data:
   dataset: "20newsgroups"
-  development_split: "data/interim/20newsgroups/splits/official_training_split.json"
+  development_split: "data/processed/20newsgroups/splits/official_training_split.json"
   expected_training_documents: 9051
   expected_validation_documents: 2263
   expected_class_count: 20

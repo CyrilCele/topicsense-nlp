@@ -4,7 +4,7 @@ project:
 
 data:
   raw_dataset_path: "data/raw/20newsgroups/20newsgroups_raw.jsonl"
-  split_manifest_path: "data/interim/20newsgroups/splits/official_training_split.json"
+  split_manifest_path: "data/processed/20newsgroups/splits/official_training_split.json"
 
 preprocessing:
   lowercase: false

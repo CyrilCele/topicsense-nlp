@@ -1,56 +1,40 @@
-
 project:
   name: topicsense-nlp
   random_seed: 42
-
 dataset:
   name: 20newsgroups
   display_name: 20 Newsgroups
   loader: sklearn.datasets.fetch_20newsgroups
-
-  source_url: "https://people.csail.mit.edu/jrennie/20Newsgroups/"
-
-  cache_dir: "data/raw/20newsgroups/cache"
-  output_file: "data/raw/20newsgroups/20newsgroups_raw.jsonl"
-  manifest_file: "data/raw/20newsgroups/20newsgroups_manifest.json"
-
-  # Preserve original headers, signatures, quotations and message bodies.
+  source_url: https://people.csail.mit.edu/jrennie/20Newsgroups/
+  cache_dir: data/raw/20newsgroups/cache
+  output_file: data/raw/20newsgroups/20newsgroups_raw.jsonl
+  manifest_file: data/raw/20newsgroups/20newsgroups_manifest.json
   remove: []
-
   subsets:
-    - train
-    - test
-
+  - train
+  - test
   shuffle: false
-
   expected_classes: 20
   expected_documents: 18846
-
 splitting:
-  validation_size: 0.20
+  validation_size: 0.2
   random_seed: 42
   stratify: true
   preserve_official_test_set: true
   group_aware: true
-
-  body_audit_report: "results/logs/dataset_body_duplicate_audit.json"
-  near_duplicate_report: "results/logs/dataset_leakage_analysis.json"
-
-  contamination_manifest: "data/interim/20newsgroups/contamination_manifest.json"
-  clean_test_ids: "data/interim/20newsgroups/clean_test_ids.json"
-  decontaminated_train_ids: "data/interim/20newsgroups/decontaminated_train_ids.json"
-
-  output_dir: "data/interim/20newsgroups/splits"
-
+  body_audit_report: results/logs/dataset_body_duplicate_audit.json
+  near_duplicate_report: results/logs/dataset_leakage_analysis.json
+  contamination_manifest: data/interim/20newsgroups/contamination_manifest.json
+  clean_test_ids: data/interim/20newsgroups/clean_test_ids.json
+  decontaminated_train_ids: data/interim/20newsgroups/decontaminated_train_ids.json
+  output_dir: "data/processed/20newsgroups/splits"
 preprocessing:
-  unicode_normalization: "NFKC"
+  unicode_normalization: NFKC
   whitespace_normalization: true
   lowercase: false
-
   representations:
-    - full_message
-    - message_body
-
+  - full_message
+  - message_body
   remove_punctuation: false
   remove_numbers: false
   remove_stopwords: false

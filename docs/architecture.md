@@ -49,8 +49,6 @@ The architecture follows these principles:
 | Experiment tracking | MLflow |
 | Visualisation | Matplotlib, Seaborn |
 | Interactive visualisation | Plotly |
-| Backend API | FastAPI |
-| Frontend dashboard | Streamlit |
 | Relational database | PostgreSQL |
 | Database ORM | SQLAlchemy |
 | Database migrations | Alembic |
@@ -237,9 +235,7 @@ Contains narrowly scoped shared utilities.
 
 The application will follow a layered architecture:
 
-**Presentation layer:** Streamlit provides the user interface.
 
-**API layer:** FastAPI provides validated endpoints for predictions, model information and analytical data.
 
 **Core layer:** The `topicsense` package performs preprocessing, feature transformation, model loading, inference and evaluation.
 
@@ -247,9 +243,7 @@ The application will follow a layered architecture:
 
 **Experiment tracking layer:** MLflow tracks experiments, parameters, metrics and artifacts.
 
-The frontend communicates with the backend through HTTP APIs. It must not directly access the database or duplicate ML inference logic.
 
-The core NLP package must not depend on the frontend or API framework.
 
 ## 7. Database Architecture
 
@@ -362,14 +356,11 @@ The implementation order is:
 8. Comparative research analysis.
 9. MLflow integration.
 10. PostgreSQL persistence.
-11. FastAPI backend.
-12. Streamlit frontend.
 13. Application integration.
 14. Docker containerisation.
 15. GitHub CI/CD.
 16. Final validation and academic reporting.
 
-Backend and frontend interfaces may be designed while ML development is underway, but implementation must use stable core interfaces.
 
 ## 13. Architecture Change Control
 

@@ -4,7 +4,6 @@
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-CPU%20First-ee4c2c.svg)](https://pytorch.org/)
-[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1.svg)](https://www.postgresql.org/)
 [![MLflow](https://img.shields.io/badge/Experiment%20Tracking-MLflow-0194E2.svg)](https://mlflow.org/)
 [![CI/CD](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF.svg)](https://github.com/features/actions)
@@ -16,8 +15,6 @@
 ## 1. Project Overview
 
 TopicSense-NLP is an academic research and software engineering project focused on the development of a reproducible, extensible and resource-aware natural language processing platform for supervised multi-class text classification.
-
-The project investigates how different machine learning and deep learning approaches classify textual documents into predefined topic categories. It combines systematic experimentation with the engineering of a complete application, including a reusable NLP engine, experiment tracking, a REST API, a PostgreSQL-backed application layer and an interactive analytical dashboard.
 
 The research considers multiple textual domains, including:
 
@@ -81,8 +78,6 @@ A functional NLP application consisting of:
 - Reusable data processing and model training components.
 - Experiment tracking through MLflow.
 - A PostgreSQL-backed application database.
-- A FastAPI REST backend.
-- A Streamlit frontend.
 - Interactive visualisations through Plotly.
 - Model metadata and version management.
 - Automated testing and quality checks.
@@ -328,8 +323,6 @@ A computationally expensive model will not automatically be considered superior 
 | Dataset utilities | Hugging Face Datasets, where appropriate |
 | Hyperparameter optimisation | Optuna |
 | Experiment tracking | MLflow |
-| Backend | FastAPI |
-| Frontend | Streamlit |
 | Interactive visualisation | Plotly |
 | Database | PostgreSQL |
 | ORM | SQLAlchemy |
@@ -339,7 +332,6 @@ A computationally expensive model will not automatically be considered superior 
 | Static visualisation | Matplotlib, Seaborn |
 | Testing | pytest |
 | Code quality | Ruff, mypy |
-| API testing | HTTPX / FastAPI TestClient |
 | Version control | Git and GitHub |
 | Large-file management | Git LFS, selectively |
 | Containerisation | Docker and Docker Compose |
@@ -425,7 +417,6 @@ topicsense-nlp/
 │       ├── registry/
 │       └── utils/
 │
-├── backend/
 │   └── topicsense_api/
 │       ├── __init__.py
 │       ├── main.py
@@ -439,7 +430,6 @@ topicsense-nlp/
 │           ├── base.py
 │           └── models/
 │
-├── frontend/
 │   ├── app.py
 │   ├── pages/
 │   ├── components/
@@ -500,8 +490,6 @@ topicsense-nlp/
 | Component | Responsibility |
 |---|---|
 | `src/topicsense/` | Core NLP functionality and reusable business logic |
-| `backend/` | REST API, request validation and application services |
-| `frontend/` | User interface and interactive dashboard |
 | `configs/` | Externalised configuration |
 | `notebooks/` | Research exploration and analysis |
 | `scripts/` | Repeatable operational entry points |
@@ -519,8 +507,6 @@ topicsense-nlp/
 The following principles are mandatory:
 
 1. Core NLP logic must reside in `src/topicsense/`.
-2. The backend must call the core package rather than duplicate its functionality.
-3. The frontend must communicate with backend services through defined interfaces.
 4. Database access must be isolated within the application persistence layer.
 5. Notebooks must import reusable functionality rather than become independent implementations.
 6. Scripts must remain thin execution interfaces.
@@ -541,12 +527,10 @@ The directory structure is frozen as the target. Directories will be created pro
                   USER
                     │
                     ▼
-          STREAMLIT FRONTEND
                     │
               HTTP / REST
                     │
                     ▼
-             FASTAPI BACKEND
                     │
           ┌─────────┼─────────┐
           │         │         │
@@ -565,10 +549,6 @@ The directory structure is frozen as the target. Directories will be created pro
 
 The architecture separates research functionality, application services, persistence, experiment tracking and presentation.
 
-### 9.2 FastAPI backend
-
-The backend will provide versioned REST endpoints, initially including:
-
 | Endpoint | Responsibility |
 |---|---|
 | `GET /api/v1/health` | Application health |
@@ -579,12 +559,6 @@ The backend will provide versioned REST endpoints, initially including:
 | `GET /api/v1/metrics` | Available evaluation summaries |
 
 The final endpoint contracts will be documented and tested.
-
-The backend will handle request validation, error responses, model access and application persistence.
-
-### 9.3 Streamlit frontend
-
-The dashboard will provide:
 
 - Project overview.
 - Single-text classification.
@@ -612,8 +586,6 @@ The initial local architecture will separate application data from MLflow tracki
 - `mlflow`
 
 The application database may contain prediction history, model metadata, application records and other approved persistent information.
-
-MLflow will use its own tracking backend database.
 
 Model checkpoints, large datasets and MLflow artifacts will be stored separately from relational database records.
 
@@ -822,8 +794,6 @@ Docker and Docker Compose will be used to standardise local application infrastr
 The intended containerised services are:
 
 - PostgreSQL.
-- FastAPI backend.
-- Streamlit frontend.
 - MLflow tracking service.
 
 Development services may be started selectively rather than all at once.
@@ -908,8 +878,6 @@ The project will be developed through controlled work packages.
 | WP06 | Advanced evaluation and error analysis | Planned |
 | WP07 | MLflow experiment tracking | Planned |
 | WP08 | PostgreSQL persistence | Planned |
-| WP09 | FastAPI backend | Planned |
-| WP10 | Streamlit dashboard | Planned |
 | WP11 | Docker and application integration | Planned |
 | WP12 | GitHub CI/CD and release engineering | Planned |
 | WP13 | Final research report and project audit | Planned |
@@ -937,8 +905,6 @@ The roadmap may be refined as implementation evidence becomes available, but the
 | Transformer implementation | Pending |
 | MLflow integration | Pending |
 | PostgreSQL integration | Pending |
-| FastAPI backend | Pending |
-| Streamlit frontend | Pending |
 | Docker infrastructure | Pending |
 | GitHub CI/CD workflows | Pending |
 | Final research report | Pending |
