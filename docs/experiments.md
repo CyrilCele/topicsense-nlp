@@ -1,302 +1,185 @@
-# TopicSense-NLP — Experimental Protocol
+# TopicSense-NLP — Experiment Documentation
 
-**Document status:** Approved experimental baseline  
-**Version:** 1.0.0
+## 1. Overview
 
-## 1. Purpose
+This document describes the experimental organisation of TopicSense-NLP.
 
-This document defines the experimental protocol for TopicSense-NLP.
+The project investigates supervised multi-class text classification using the 20 Newsgroups dataset.
 
-It establishes a consistent framework for model comparison, preprocessing evaluation, learning-curve analysis, cross-domain testing and computational performance measurement.
+The experiments compare classical machine-learning models, neural networks and transformer-based approaches.
 
-The protocol is designed to support reproducible and scientifically defensible experiments.
+A total of 16 configurations are included in the experimental scope.
 
-## 2. Experiment Design Principles
+## 2. Experimental Dataset
 
-All experiments must follow these principles:
+The experiments use the 20 Newsgroups dataset.
 
-1. Use documented datasets and fixed split identifiers.
-2. Prevent training and test data leakage.
-3. Record all model configurations.
-4. Use validation data for model selection.
-5. Reserve test data for final evaluation.
-6. Record computational resource usage.
-7. Maintain reproducible experiment identifiers.
-8. Avoid unsupported conclusions from isolated results.
+| Partition | Documents |
+|---|---:|
+| Development training | 9,051 |
+| Validation | 2,263 |
+| Official test | 7,532 |
 
-## 3. Experiment Identification
+The development training partition is used for fitting models.
 
-Experiments will use a consistent naming convention.
+The validation partition supports model comparison and error analysis.
 
-| Identifier | Experiment |
+The official test partition is kept separate from model selection.
+
+## 3. Notebook Sequence
+
+The research is documented through seven sequential notebooks.
+
+| Notebook | Research stage |
 |---|---|
-| EXP-01 | Multinomial Naive Bayes baseline |
-| EXP-02 | Logistic Regression baseline |
-| EXP-03 | Linear SVM baseline |
-| EXP-04 | TextCNN |
-| EXP-05 | Bidirectional LSTM |
-| EXP-06 | DistilBERT fine-tuning |
-| EXP-07 | Frozen transformer embeddings |
-| EXP-08 | Bag of Words versus TF-IDF |
-| EXP-09 | Preprocessing comparison |
-| EXP-10 | Training dataset size analysis |
-| EXP-11 | Hyperparameter optimisation |
-| EXP-12 | Cross-domain evaluation |
-| EXP-13 | Confidence and calibration analysis |
-| EXP-14 | Classification error analysis |
-| EXP-15 | Computational efficiency comparison |
+| `01_dataset_exploration.ipynb` | Dataset exploration |
+| `02_data_preprocessing.ipynb` | Data preparation and preprocessing |
+| `03_classical_baselines.ipynb` | Classical machine-learning experiments |
+| `04_neural_networks.ipynb` | Neural-network experiments |
+| `05_transformer_experiments.ipynb` | Transformer experiments |
+| `06_model_comparison.ipynb` | Comparative model evaluation |
+| `07_error_analysis.ipynb` | Classification error analysis |
 
-Experiments may be omitted or narrowed where resource constraints or methodological limitations justify the decision. Any omission must be documented.
+The sequence follows the research workflow from dataset understanding through model evaluation.
 
-## 4. Classical Baseline Experiments
+## 4. Classical Machine-Learning Experiments
 
-### EXP-01: Multinomial Naive Bayes
+The classical experiments evaluate three algorithms.
 
-Objective: Establish a probabilistic classical classification baseline.
+| Algorithm | Description |
+|---|---|
+| Multinomial Naive Bayes | Probabilistic text classification |
+| Logistic Regression | Linear classification |
+| Linear SVM | Maximum-margin linear classification |
 
-Initial feature representation: TF-IDF or count-based features, selected and documented during implementation.
+Two feature representations are investigated:
 
-### EXP-02: Logistic Regression
+- Bag-of-Words.
+- TF-IDF.
 
-Objective: Evaluate a linear discriminative classifier.
+Two text scopes are considered:
 
-The experiment will investigate regularisation and relevant solver configurations.
+- Full-message text.
+- Message-body text.
 
-### EXP-03: Linear Support Vector Machine
+This produces 12 classical experimental configurations.
 
-Objective: Evaluate a linear margin-based classifier.
+## 5. Neural-Network Experiments
 
-The experiment will investigate regularisation strength and decision-score behaviour.
+The neural experiments investigate:
 
-The three classical models must use comparable datasets and evaluation splits.
+| Architecture | Description |
+|---|---|
+| TextCNN | Convolutional text classification |
+| BiLSTM | Bidirectional recurrent text classification |
 
-## 5. Neural Network Experiments
-
-### EXP-04: TextCNN
-
-Objective: Investigate convolutional neural networks for text classification.
-
-The experiment will document:
-
-- Tokenisation.
-- Vocabulary size.
-- Embedding dimension.
-- Convolutional filter configuration.
-- Optimiser.
-- Learning rate.
-- Batch size.
-- Epoch count.
-- Early stopping strategy.
-
-### EXP-05: Bidirectional LSTM
-
-Objective: Investigate sequential neural representations.
-
-This experiment is conditional on available CPU time and memory.
-
-It must use a comparable evaluation protocol to the other models.
+Two neural-network configurations are included.
 
 ## 6. Transformer Experiments
 
-### EXP-06: DistilBERT
+Two transformer-based approaches are investigated.
 
-Objective: Evaluate transformer fine-tuning for multi-class topic classification.
+### 6.1 DistilBERT Fine-Tuning
 
-Initial CPU smoke-test configuration:
+DistilBERT is adapted to the 20 Newsgroups classification task through supervised fine-tuning.
 
-- Maximum sequence length: 128.
-- Batch size: 4.
-- Gradient accumulation: 2.
-- Epochs: 2.
-- Learning rate: 2e-5.
-- Weight decay: 0.01.
-- Warmup ratio: 0.1.
+### 6.2 Frozen Sentence Transformer Embeddings
 
-These values are starting points for a smoke test, not guaranteed optimal hyperparameters.
+The `sentence-transformers/all-MiniLM-L6-v2` model produces sentence embeddings.
 
-The experiment must record runtime and memory consumption.
+These embeddings are used with Logistic Regression for classification.
 
-### EXP-07: Frozen Transformer Embeddings
+The embedding model remains frozen.
 
-Objective: Investigate the use of pretrained sentence embeddings with a lightweight downstream classifier.
+Two transformer configurations are included.
 
-This experiment is optional and depends on available resources.
+## 7. Experiment Summary
 
-## 7. Feature Representation Experiments
+| Model family | Number of configurations |
+|---|---:|
+| Classical machine learning | 12 |
+| Neural networks | 2 |
+| Transformer-based approaches | 2 |
+| **Total** | **16** |
 
-### EXP-08: Bag of Words versus TF-IDF
+## 8. Evaluation Metrics
 
-Compare the effects of count-based and TF-IDF representations.
+The experiments use the following classification metrics:
 
-The comparison must control for the classifier and data split.
+- Accuracy.
+- Precision.
+- Recall.
+- Macro F1-score.
+- Confusion matrices.
+- Class-level classification reports.
 
-Where practical, repeat the comparison across the three classical baselines.
+Macro F1-score is particularly useful for comparing performance across the 20 categories.
 
-## 8. Preprocessing Experiments
+## 9. Model Comparison
 
-### EXP-09: Preprocessing Comparison
+The model comparison stage consolidates the experimental results.
 
-Investigate the effects of selected preprocessing decisions.
+The recorded strongest validation configuration is:
 
-Potential comparisons:
+**Linear SVM + TF-IDF + full-message text**
 
-- Raw versus normalised text.
-- Lowercase versus case-preserving text.
-- Stopword removal versus retention.
-- Stemming versus lemmatisation.
-- Unigrams versus unigram/bigram features.
+| Metric | Validation result |
+|---|---:|
+| Accuracy | 91.47% |
+| Macro F1-score | 0.9138 |
 
-Only meaningful, controlled comparisons should be included.
+These are validation metrics and must not be presented as official test-set results.
 
-## 9. Training Dataset Size Experiments
+## 10. Error Analysis
 
-### EXP-10: Learning Curves
+The error-analysis stage examines misclassified validation documents.
 
-Investigate the relationship between training data size and classification performance.
+The analysis considers:
 
-Proposed training fractions:
+- Actual labels.
+- Predicted labels.
+- Misclassification patterns.
+- Class-level performance.
+- Potentially ambiguous examples.
 
-| Fraction | Purpose |
-|---|---|
-| 10% | Small-data behaviour |
-| 25% | Early learning behaviour |
-| 50% | Intermediate learning behaviour |
-| 75% | Near-full training behaviour |
-| 100% | Full training performance |
+The purpose is to complement aggregate evaluation metrics with a more detailed understanding of classification behaviour.
 
-The validation and test sets must remain fixed.
+## 11. Configuration Management
 
-Training subsets must be sampled reproducibly and preserve class representation where possible.
+Experiment settings are maintained in the `configs/` directory.
 
-## 10. Hyperparameter Optimisation
+The configuration files cover:
 
-### EXP-11: Optuna Optimisation
+- Data settings.
+- Classical machine-learning settings.
+- Neural-network settings.
+- Transformer settings.
+- Experiment settings.
 
-Use Optuna selectively to optimise model configurations.
+The configuration files provide a central location for experiment parameters and support consistent execution.
 
-The optimisation objective should be defined before the search.
+## 12. Reproducibility
 
-The validation set must be used for optimisation, never the final test set.
+Experimental reproducibility is supported through:
 
-Search spaces, trial counts, random seeds and stopping criteria must be recorded.
+- Version-controlled code.
+- `uv.lock`.
+- Configuration files.
+- Documented dataset partitions.
+- Sequential notebooks.
+- Reusable model implementations.
+- Consistent evaluation metrics.
 
-## 11. Cross-Domain Evaluation
+## 13. Interpretation and Limitations
 
-### EXP-12: Domain Transfer
+The results represent experiments on one historical text-classification dataset.
 
-Evaluate models across compatible datasets from different textual domains.
+Performance should not be generalised automatically to other datasets or domains.
 
-Record:
+Validation metrics are used for model comparison. They are not substitutes for independent official test-set evaluation.
 
-- Source training dataset.
-- Target evaluation dataset.
-- Label mapping.
-- Source and target class distributions.
-- In-domain metrics.
-- Cross-domain metrics.
-- Performance differences.
+## 14. Conclusion
 
-Do not compare incompatible label taxonomies as if they represented identical tasks.
+The experimental framework provides a structured comparison of 16 configurations across classical machine learning, neural networks and transformer-based approaches.
 
-## 12. Confidence and Calibration
-
-### EXP-13: Confidence Analysis
-
-Investigate prediction confidence and calibration where model outputs support meaningful probability estimates.
-
-Potential analyses:
-
-- Reliability diagrams.
-- Calibration error.
-- Temperature scaling.
-- Confidence distributions.
-- Selective prediction.
-
-Do not interpret raw SVM decision scores as calibrated probabilities.
-
-## 13. Error Analysis
-
-### EXP-14: Error Analysis
-
-Investigate:
-
-- Frequently confused classes.
-- False positives.
-- False negatives.
-- Ambiguous documents.
-- Short and long documents.
-- Domain-specific errors.
-- Class imbalance effects.
-
-Examples selected for reporting must be handled responsibly and must not expose unnecessary personal information.
-
-## 14. Computational Efficiency
-
-### EXP-15: Efficiency Comparison
-
-Measure:
-
-- Training duration.
-- Inference latency.
-- Throughput.
-- Peak memory where measurable.
-- Model artifact size.
-
-Comparisons must document the measurement environment, batch size and timing method.
-
-Do not compare runtimes collected under materially different conditions without explaining the difference.
-
-## 15. Experiment Tracking
-
-MLflow will be used to record:
-
-- Experiment name.
-- Run identifier.
-- Dataset and split.
-- Parameters.
-- Metrics.
-- Artifacts.
-- Runtime information.
-- Model references.
-
-Experiment outputs will be organised under:
-
-```text
-results/
-├── metrics/
-├── figures/
-├── tables/
-└── logs/
-```
-
-Model checkpoints and registry artifacts will be organised under:
-
-```text
-models/
-├── checkpoints/
-└── registry/
-```
-
-## 16. Statistical Interpretation
-
-Results must be interpreted in relation to dataset size, class distribution, domain characteristics and model complexity.
-
-Where computationally practical, repeated runs or confidence intervals should be used to assess result stability.
-
-Small performance differences must not automatically be presented as meaningful improvements.
-
-## 17. Reporting Requirements
-
-Every reported experiment must include:
-
-- Research objective.
-- Dataset and split.
-- Model configuration.
-- Experimental conditions.
-- Evaluation metrics.
-- Computational measurements where applicable.
-- Observed results.
-- Interpretation.
-- Limitations.
-
-No experiment may be reported as completed before it has actually been executed and validated.
+The resulting analysis supports an empirical understanding of text representation, model architecture and classification performance.

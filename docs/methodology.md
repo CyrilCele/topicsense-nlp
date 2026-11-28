@@ -1,269 +1,232 @@
 # TopicSense-NLP — Research Methodology
 
-**Document status:** Approved baseline  
-**Version:** 1.0.0
+## 1. Introduction
 
-## 1. Research Objective
+This document describes the methodology adopted in TopicSense-NLP, a supervised multi-class text classification research project using the 20 Newsgroups dataset.
 
-The primary objective is to develop and evaluate a supervised NLP system for multi-class topic classification across different textual domains.
+The research compares classical machine-learning algorithms, neural-network architectures and transformer-based approaches under a consistent experimental framework.
 
-The research compares classical machine-learning algorithms, neural network architectures and transformer-based models under controlled experimental conditions.
+The methodology covers dataset preparation, text representation, model development, evaluation and error analysis.
 
-The investigation considers both predictive performance and computational efficiency.
+## 2. Research Design
 
-## 2. Research Questions
+The project follows an experimental comparative research design.
 
-The project investigates the following questions:
+Three model families are investigated:
 
-**RQ1:** How effectively can supervised machine-learning models classify documents into predefined topic categories?
+1. Classical machine learning.
+2. Neural networks.
+3. Transformer-based approaches.
 
-**RQ2:** How does training dataset size influence classification performance?
+The objective is to examine the impact of model architecture and text representation on multi-class classification performance.
 
-**RQ3:** Which classical machine-learning algorithm provides the strongest classification performance?
+The experiments use the same underlying classification task and documented data partitions.
 
-**RQ4:** How do text preprocessing and feature representation choices influence classification performance?
+## 3. Dataset
 
-**RQ5:** How effectively do trained models generalise across different textual domains?
+The 20 Newsgroups dataset contains 18,846 documents belonging to 20 topic categories.
 
-**RQ6:** Do neural network architectures provide meaningful improvements over classical machine-learning approaches?
+The original partitions are:
 
-**RQ7:** Does transformer fine-tuning justify its computational cost in a CPU-constrained environment?
+| Partition | Documents |
+|---|---:|
+| Original training | 11,314 |
+| Official test | 7,532 |
+| Total | 18,846 |
 
-**RQ8:** How do the confidence and calibration characteristics of different model families compare?
+The original training partition is divided into:
 
-**RQ9:** Which model provides the most appropriate balance between predictive performance and computational efficiency?
+| Development partition | Documents |
+|---|---:|
+| Training | 9,051 |
+| Validation | 2,263 |
 
-## 3. Research Design
+The official test partition is retained separately from model development and selection.
 
-The project uses a quantitative experimental research design.
+## 4. Data Preparation
 
-Models will be trained using labelled datasets and evaluated using held-out data.
+Data preparation involves:
 
-Experiments will compare model families under controlled conditions, with consistent data splits and documented preprocessing configurations.
+- Dataset acquisition.
+- Dataset validation.
+- Document inspection.
+- Duplicate analysis.
+- Contamination and leakage investigation.
+- Text preprocessing.
+- Dataset partition management.
 
-The primary evaluation task is supervised multi-class classification.
+The project separates raw, intermediate and processed data.
 
-## 4. Dataset Strategy
+Split manifests are maintained under:
 
-The project will use a hybrid dataset strategy consisting of:
+`data/processed/20newsgroups/splits/`
 
-- A primary benchmark dataset.
-- Additional labelled datasets for cross-domain evaluation.
+The preprocessing workflow also considers two text scopes:
 
-The proposed primary benchmark is the 20 Newsgroups dataset, subject to final source, licence and suitability verification.
+- Full-message text.
+- Message-body text.
 
-Additional datasets may include news articles, academic abstracts and social-media text.
+This allows the experiments to investigate the influence of document headers and message content on classification performance.
 
-Datasets will not be merged automatically. Label harmonisation will only occur where semantic equivalence can be justified.
+## 5. Classical Machine Learning
 
-Otherwise, cross-domain evaluation will be performed using separate dataset-specific label spaces and clearly documented transfer settings.
+The classical machine-learning experiments investigate three algorithms:
 
-## 5. Data Quality and Preparation
+### 5.1 Multinomial Naive Bayes
 
-Each dataset must be inspected before model training.
+Multinomial Naive Bayes provides a probabilistic baseline for text classification using non-negative feature representations.
 
-The inspection process includes:
+### 5.2 Logistic Regression
 
-- Source and licence verification.
-- Dataset size.
-- Class distribution.
-- Missing values.
-- Duplicate records.
-- Language consistency.
-- Document length distribution.
-- Label consistency.
-- Potential data leakage.
+Logistic Regression provides a linear classification approach that estimates class probabilities and supports multi-class prediction.
 
-The dataset must be standardised into a consistent internal representation containing document text, label and relevant metadata.
+### 5.3 Linear Support Vector Machine
 
-Dataset-specific metadata must be retained where useful for analysis.
+Linear SVM learns separating hyperplanes in a high-dimensional feature space and provides a strong baseline for sparse text representations.
 
-## 6. Data Splitting
+### 5.4 Feature Representations
 
-The preferred evaluation strategy is stratified splitting where class distributions permit it.
+The classical models are evaluated using:
 
-The dataset will be divided into:
+- Bag-of-Words.
+- Term Frequency-Inverse Document Frequency (TF-IDF).
 
-- Training set.
-- Validation set.
-- Test set.
+Both full-message and message-body text are considered.
 
-The test set must remain untouched during model selection and hyperparameter optimisation.
+The classical experiments contain 12 configurations.
 
-Preprocessing transformations that learn from data, including vocabulary construction and TF-IDF weighting, must be fitted only on the training data.
+## 6. Neural-Network Experiments
 
-Where documents share authors, conversations, threads or near-duplicate content, group-aware splitting will be considered to reduce leakage.
+Two neural-network architectures are investigated.
 
-Random seeds and split identifiers must be recorded.
+### 6.1 TextCNN
 
-## 7. Text Preprocessing
+TextCNN uses convolutional operations over token representations to identify local textual patterns relevant to classification.
 
-The preprocessing investigation will consider:
+### 6.2 Bidirectional LSTM
 
-- Text normalisation.
-- Case handling.
-- Tokenisation.
-- Stopword removal.
-- Stemming.
-- Lemmatisation.
-- Punctuation handling.
-- URL and HTML processing.
-- Vocabulary filtering.
+BiLSTM processes sequences in both forward and backward directions, allowing contextual information from both directions to contribute to document representations.
 
-Preprocessing decisions must be justified experimentally.
+The neural-network experiments contain two configurations.
 
-Stopword removal will not be applied indiscriminately because some words may contribute meaningful topic information.
+## 7. Transformer Experiments
 
-The same preprocessing assumptions must be applied consistently when comparing relevant model configurations.
+The transformer experiments investigate two approaches.
 
-## 8. Feature Representation
+### 7.1 Fine-Tuned DistilBERT
 
-Classical machine-learning models will use numerical text representations, primarily:
+DistilBERT is fine-tuned for supervised classification using the project dataset.
 
-- Bag of Words.
-- TF-IDF.
-- Unigram features.
-- Unigram and bigram combinations.
+This approach investigates contextual representations learned through transformer pretraining and task-specific adaptation.
 
-Feature extraction must be fitted using training data only.
+### 7.2 Frozen Sentence Transformer Embeddings
 
-Neural and transformer models will use tokenised or embedded representations appropriate to their architectures.
+The `sentence-transformers/all-MiniLM-L6-v2` model generates sentence embeddings.
 
-## 9. Model Families
+The embeddings are used as input features for Logistic Regression.
 
-### 9.1 Classical Machine Learning
+The embedding model remains frozen during this classification workflow.
 
-The mandatory classical baselines are:
+The transformer experiments contain two configurations.
 
-- Multinomial Naive Bayes.
-- Logistic Regression.
-- Linear Support Vector Machine.
+## 8. Experimental Scope
 
-These models provide computationally efficient baselines.
+The complete experimental comparison contains 16 configurations:
 
-### 9.2 Neural Networks
+| Model family | Configurations |
+|---|---:|
+| Classical machine learning | 12 |
+| Neural networks | 2 |
+| Transformer-based approaches | 2 |
+| **Total** | **16** |
 
-The planned neural architectures are:
+The configurations are maintained in the project configuration files and associated research workflows.
 
-- TextCNN.
-- Bidirectional LSTM, if computationally feasible.
+## 9. Evaluation Methodology
 
-### 9.3 Transformer Models
-
-The primary transformer candidate is DistilBERT.
-
-A frozen sentence-transformer embedding approach may be considered as an additional experiment if resources and time permit.
-
-Transformer experiments will use bounded CPU configurations and documented resource measurements.
-
-## 10. Training and Hyperparameter Optimisation
-
-Each model must be trained using documented configurations.
-
-Hyperparameter optimisation will use Optuna selectively.
-
-Optimisation must use training and validation data only.
-
-The final test set must not be used for hyperparameter selection.
-
-All relevant seeds, model parameters and runtime settings must be recorded.
-
-## 11. Evaluation Metrics
-
-The evaluation framework will report:
+Classification performance is evaluated using:
 
 - Accuracy.
 - Precision.
 - Recall.
 - Macro F1-score.
-- Weighted F1-score.
-- Per-class precision, recall and F1-score.
-- Confusion matrix.
+- Confusion matrices.
+- Class-level classification reports.
 
-Computational evaluation will additionally consider:
+Macro-averaged metrics provide insight into performance across all classes without weighting classes according to their sample counts.
 
-- Training duration.
-- Inference latency.
-- Inference throughput.
-- Peak memory usage where measurable.
-- Model artifact size.
+The validation partition supports model comparison and selection.
 
-Where probability estimates are available and meaningful, calibration will be investigated using appropriate methods.
+The official test partition remains separate from these activities.
 
-Macro F1-score will be a primary comparison metric because it provides equal weight to each class.
+## 10. Model Comparison
 
-Accuracy and weighted F1-score will provide complementary information.
+The model comparison process consolidates experimental results to examine differences between model families and configurations.
 
-## 12. Learning Curve Analysis
+The comparison considers:
 
-The influence of training dataset size will be investigated using progressively larger training subsets.
-
-Proposed fractions:
-
-- 10%.
-- 25%.
-- 50%.
-- 75%.
-- 100%.
-
-Validation and test sets will remain fixed during these experiments.
-
-Sampling will preserve class representation where possible.
-
-## 13. Cross-Domain Evaluation
-
-Cross-domain experiments will investigate how models trained on one domain perform on another.
-
-The source and target datasets must have compatible labels or an explicitly justified label-mapping strategy.
-
-Results will distinguish between:
-
-- In-domain performance.
-- Cross-domain performance.
-- Domain adaptation, if implemented.
-
-A decline in performance will be analysed rather than hidden.
-
-## 14. Reproducibility
-
-Experiments must record:
-
-- Dataset identity and version.
-- Data split identifiers.
-- Random seeds.
-- Preprocessing configuration.
-- Feature representation.
 - Model architecture.
-- Hyperparameters.
-- Software versions.
-- Hardware configuration.
-- Training and inference runtime.
-- Evaluation metrics.
+- Text representation.
+- Text scope.
+- Classification accuracy.
+- Macro F1-score.
+- Class-level performance.
+- Computational considerations.
 
-MLflow will be used to track experiments once its integration phase is implemented.
+The strongest recorded validation configuration is Linear SVM with TF-IDF features using full-message text.
 
-## 15. Computational Constraints
+Its recorded validation performance is:
 
-The project is developed on CPU-only hardware.
+| Metric | Result |
+|---|---:|
+| Accuracy | 91.47% |
+| Macro F1-score | 0.9138 |
 
-Classical machine-learning models are the mandatory first priority.
+These values represent validation performance, not official test-set performance.
 
-Neural and transformer experiments will be introduced progressively after successful smoke tests.
+## 11. Error Analysis
 
-Experiment configurations must account for available memory, CPU threads, sequence length, batch size and training duration.
+Error analysis investigates incorrectly classified validation examples.
 
-Computational infeasibility must be reported honestly.
+The analysis considers:
 
-## 16. Research Integrity
+- Actual and predicted categories.
+- Misclassification patterns.
+- Class-level performance differences.
+- Potentially ambiguous documents.
+- The relationship between document content and classification errors.
 
-No performance result may be invented or presented without an actual experiment.
+The purpose is to understand model behaviour rather than relying exclusively on aggregate performance metrics.
 
-The final report must distinguish measured results from expectations and hypotheses.
+## 12. Reproducibility
 
-All datasets must have documented provenance and licensing.
+The research methodology supports reproducibility through:
 
-Potential data leakage, class imbalance, domain mismatch and limitations must be explicitly discussed.
+- Explicit dataset partitions.
+- Version-controlled dependency specifications.
+- YAML experiment configurations.
+- Reusable Python implementations.
+- Sequentially organised notebooks.
+- Consistent evaluation procedures.
+- Automated tests.
 
-## 17. Expected Research Contribution
+The project uses `uv.lock` to record resolved dependency versions.
 
-The expected contribution is a reproducible comparative investigation of supervised multi-class topic classification across multiple textual domains, with particular attention to the relationship between predictive performance, training data size, model complexity and computational efficiency.
+## 13. Methodological Limitations
+
+The findings are subject to several limitations:
+
+- All experiments use a single dataset.
+- The dataset represents historical newsgroup discussions.
+- Model performance may vary across unrelated domains.
+- Validation results do not establish official test-set performance.
+- Different model families have different computational requirements.
+- Results depend on preprocessing, feature representation and experimental configuration.
+
+Consequently, conclusions should remain within the scope of the implemented experiments.
+
+## 14. Conclusion
+
+The methodology establishes a structured comparative framework for supervised multi-class text classification.
+
+By investigating classical machine learning, neural networks and transformer-based approaches, TopicSense-NLP provides an empirical examination of different modelling strategies using a common dataset and evaluation framework.

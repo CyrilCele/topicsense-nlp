@@ -1,91 +1,61 @@
-# TopicSense-NLP — System Architecture
+# TopicSense-NLP — Architecture
 
-**Document status:** Approved — Baseline  
-**Version:** 1.0.0  
 **Project:** TopicSense-NLP  
-**Last updated:** 24 November 2026
+**Version:** 1.0.0  
+**Status:** Final research implementation
 
-## 1. Project Overview
+## 1. Overview
 
-TopicSense-NLP is a modular Natural Language Processing (NLP) system for supervised, multi-class topic classification across multiple textual domains.
+TopicSense-NLP is a modular Python research project for supervised multi-class text classification using the 20 Newsgroups dataset.
 
-The project combines classical machine learning, neural networks and transformer-based approaches within a reproducible experimental framework.
+The implementation provides reusable functionality for dataset ingestion, validation, preprocessing, feature extraction, model training, evaluation, experiment comparison and error analysis.
 
-The system has two primary objectives:
-
-1. Conduct rigorous research comparing supervised text classification approaches across different datasets and textual domains.
-2. Develop a reusable NLP application capable of processing text, generating topic predictions, evaluating models and presenting analytical results.
-
-Although the assignment refers to topic modeling, the implementation focuses on supervised topic classification using labelled documents. Unsupervised topic modeling is not a replacement for the required classification task.
+The project is organised around a Python package, configuration files, research notebooks and supporting scripts.
 
 ## 2. Architectural Principles
 
-The architecture follows these principles:
+The implementation follows these principles:
 
-- **Modularity:** Each component has a clearly defined responsibility.
-- **Separation of concerns:** Data processing, model training, evaluation and inference remain independent.
-- **Reusability:** Core NLP functionality must be accessible from scripts and notebooks without duplicated implementations.
-- **Reproducibility:** Experiments must be configurable, traceable and repeatable.
-- **Testability:** Components must be designed for independent testing.
-- **Scalability:** The architecture should support additional datasets, models and domains.
-- **Resource awareness:** Development and experimentation must accommodate CPU-only hardware.
-- **Maintainability:** Code and documentation must remain understandable and consistently organised.
+- **Modularity:** Responsibilities are separated into focused Python modules.
+- **Reproducibility:** Configurations, data partitions and dependency versions are maintained explicitly.
+- **Separation of concerns:** Data processing, preprocessing, modelling and evaluation are distinct.
+- **Reusability:** Shared functionality is implemented in the Python package.
+- **Testability:** Core functionality is supported by automated tests.
+- **Research integrity:** Training, validation and official test data have distinct roles.
 
 ## 3. Technology Stack
 
 | Component | Technology |
 |---|---|
 | Programming language | Python 3.12 |
-| Dependency management | uv |
+| Environment management | uv |
 | Numerical computing | NumPy |
-| Data manipulation | Pandas |
-| Classical machine learning | Scikit-learn |
-| Scientific computing | SciPy |
+| Data manipulation | pandas |
+| Classical machine learning | scikit-learn |
 | Neural networks | PyTorch |
 | Transformer models | Hugging Face Transformers |
-| Dataset integration | Hugging Face Datasets |
-| Hyperparameter optimisation | Optuna |
+| Sentence embeddings | Sentence Transformers |
 | Configuration | YAML / PyYAML |
-| Experiment tracking | MLflow |
-| Visualisation | Matplotlib, Seaborn |
-| Interactive visualisation | Plotly |
-| Relational database | PostgreSQL |
-| Database ORM | SQLAlchemy |
-| Database migrations | Alembic |
-| PostgreSQL driver | psycopg 3 |
+| Research environment | JupyterLab |
+| Visualisation | Matplotlib and Seaborn |
 | Testing | pytest |
-| Code quality | Ruff |
-| Static typing | mypy |
-| Containerisation | Docker |
-| Container orchestration | Docker Compose |
-| CI/CD | GitHub Actions |
-| Container registry | GitHub Container Registry |
+| Linting and formatting | Ruff |
+| Static type checking | mypy |
 
-All dependency versions are controlled through `pyproject.toml` and `uv.lock`.
+The authoritative dependency definitions are `pyproject.toml` and `uv.lock`.
 
-## 4. Repository Architecture
+## 4. Repository Organisation
 
 ```text
 topicsense-nlp/
-│
-├── pyproject.toml
-├── uv.lock
-├── README.md
-├── .gitignore
-│
 ├── configs/
-│   ├── data.yaml
-│   ├── classical_ml.yaml
-│   ├── neural_networks.yaml
-│   ├── transformers.yaml
-│   └── experiments.yaml
-│
 ├── data/
 │   ├── raw/
 │   ├── interim/
-│   ├── processed/
-│   └── README.md
-│
+│   └── processed/
+│       └── 20newsgroups/
+│           └── splits/
+├── docs/
 ├── notebooks/
 │   ├── 01_dataset_exploration.ipynb
 │   ├── 02_data_preprocessing.ipynb
@@ -94,10 +64,9 @@ topicsense-nlp/
 │   ├── 05_transformer_experiments.ipynb
 │   ├── 06_model_comparison.ipynb
 │   └── 07_error_analysis.ipynb
-│
+├── scripts/
 ├── src/
 │   └── topicsense/
-│       ├── __init__.py
 │       ├── config/
 │       ├── data/
 │       ├── preprocessing/
@@ -108,272 +77,116 @@ topicsense-nlp/
 │       │   └── transformers/
 │       ├── training/
 │       ├── evaluation/
+│       ├── experiments/
 │       ├── explainability/
 │       ├── inference/
 │       ├── registry/
 │       └── utils/
-│
-├── scripts/
-│   ├── download_data.py
-│   ├── validate_data.py
-│   ├── train_classical.py
-│   ├── train_neural.py
-│   ├── train_transformer.py
-│   ├── evaluate_models.py
-│   └── run_experiments.py
-│
 ├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── test_prediction.py
-│
-├── models/
-│   ├── checkpoints/
-│   └── registry/
-│
 ├── results/
-│   ├── metrics/
-│   ├── figures/
-│   ├── tables/
-│   └── logs/
-│
-├── reports/
-│   ├── technical/
-│   └── academic/
-│
-└── docs/
-    ├── architecture.md
-    ├── methodology.md
-    ├── experiments.md
-    ├── dataset_card.md
-    └── model_card.md
+├── pyproject.toml
+├── uv.lock
+├── LICENSE
+└── README.md
 ```
 
-## 5. Core Package Responsibilities
+## 5. Package Responsibilities
 
-### config/
+### Data
 
-Responsible for loading, validating and managing project configurations.
+The data functionality handles dataset acquisition, validation, document auditing, duplicate analysis and data-quality investigations.
 
-### data/
+### Preprocessing
 
-Responsible for:
+The preprocessing functionality prepares text and supports reproducible dataset partitioning.
 
-- Dataset acquisition.
-- Dataset validation.
-- Dataset standardisation.
-- Dataset splitting.
-- Duplicate detection.
-- Dataset provenance and metadata.
+### Features
 
-### preprocessing/
+The feature functionality provides numerical text representations, including Bag-of-Words and TF-IDF.
 
-Responsible for:
+### Models
 
-- Text normalisation.
-- Tokenisation.
-- Stopword handling.
-- Stemming and lemmatisation.
-- Text cleaning.
-- Preprocessing pipelines.
+Model implementations are organised by family:
 
-### features/
+- `classical`: classical machine-learning estimators.
+- `neural`: TextCNN and BiLSTM architectures.
+- `transformers`: transformer-related model functionality.
 
-Responsible for numerical representations of text, including:
+### Training
 
-- Bag of Words.
-- TF-IDF.
-- Unigrams and bigrams.
-- Vocabulary management.
-- Feature transformation.
+The training functionality supports the training workflows for the different model families.
 
-### models/
+### Evaluation
 
-Contains model implementations organised by family.
+The evaluation functionality provides classification metrics, comparative evaluation and error analysis.
 
-**classical/**
+## 6. Research Workflow
 
-- Multinomial Naive Bayes.
-- Logistic Regression.
-- Linear Support Vector Machine.
+The project follows a sequential research workflow:
 
-**neural/**
+1. Dataset acquisition and exploration.
+2. Data validation and quality assessment.
+3. Preprocessing and partition preparation.
+4. Classical machine-learning experiments.
+5. Neural-network experiments.
+6. Transformer experiments.
+7. Model comparison.
+8. Classification error analysis.
 
-- TextCNN.
-- Bidirectional LSTM, subject to feasibility.
+The seven numbered notebooks document this workflow.
 
-**transformers/**
+## 7. Data Organisation
 
-- DistilBERT fine-tuning.
-- Optional frozen transformer embeddings.
+The project separates data according to its processing stage:
 
-### training/
+- `data/raw/`: acquired source data.
+- `data/interim/`: intermediate processing outputs.
+- `data/processed/`: prepared datasets and split information.
 
-Responsible for training orchestration, reproducibility, hyperparameters and model checkpoint management.
+The processed split manifests are maintained under:
 
-### evaluation/
+`data/processed/20newsgroups/splits/`
 
-Responsible for performance metrics, confusion matrices, classification reports, learning curves and error analysis.
+These include:
 
-### explainability/
+- `official_training_split.json`
+- `decontaminated_training_split.json`
+- `preprocessing_split_manifest.json`
 
-Responsible for model interpretation and feature attribution where methodologically justified.
+The official test partition remains separate from model development and selection.
 
-### inference/
+## 8. Experiment Outputs
 
-Responsible for loading trained models and providing consistent prediction interfaces.
+Research outputs are organised under `results/`, including generated metrics, figures, tables and logs.
 
-### registry/
+Outputs must be interpreted in relation to their dataset partition and experiment configuration.
 
-Responsible for model metadata, versions and references to stored model artifacts.
+## 9. Testing and Code Quality
 
-### utils/
+The project uses:
 
-Contains narrowly scoped shared utilities.
+- pytest for automated testing.
+- Ruff for linting and formatting.
+- mypy for static type checking.
 
-## 6. Application Architecture
+These tools support the maintainability and reliability of the reusable Python package and supporting scripts.
 
-The application will follow a layered architecture:
+## 10. Reproducibility
 
+Reproducibility is supported through:
 
+- Version-controlled dependency specifications.
+- YAML experiment configurations.
+- Documented dataset partitions.
+- Reusable Python modules.
+- Sequential research notebooks.
+- Consistent evaluation procedures.
+- Automated tests.
 
-**Core layer:** The `topicsense` package performs preprocessing, feature transformation, model loading, inference and evaluation.
+The `uv.lock` file records resolved dependency versions.
 
-**Persistence layer:** PostgreSQL stores application metadata and other explicitly approved persistent records.
+## 11. Conclusion
 
-**Experiment tracking layer:** MLflow tracks experiments, parameters, metrics and artifacts.
+TopicSense-NLP provides a modular and reproducible research implementation for supervised multi-class text classification.
 
-
-
-## 7. Database Architecture
-
-PostgreSQL is the selected relational database.
-
-Two logically separate databases will be maintained on the PostgreSQL server:
-
-- `topicsense_app`: application data and metadata.
-- `mlflow`: MLflow experiment-tracking metadata.
-
-SQLAlchemy provides database access, Alembic manages schema migrations, and psycopg 3 provides PostgreSQL connectivity.
-
-Model checkpoints and experiment artifacts must remain outside the relational metadata database.
-
-Raw user-submitted documents will not be retained by default. Any decision to retain document content requires an explicit privacy and retention assessment.
-
-## 8. MLflow Architecture
-
-MLflow will be responsible for experiment tracking and model lifecycle management.
-
-Tracked information will include:
-
-- Experiment identifiers.
-- Run identifiers.
-- Model family and configuration.
-- Hyperparameters.
-- Dataset and split identifiers.
-- Evaluation metrics.
-- Training duration.
-- Inference performance.
-- Model artifact references.
-
-MLflow metadata will use the dedicated PostgreSQL database. Artifacts will use a separate filesystem-backed storage location during local development, with persistent storage configured for Docker.
-
-## 9. Development and Runtime Environments
-
-### Local development
-
-`uv` is the authoritative local Python dependency and environment manager.
-
-Developers will use:
-
-```bash
-uv sync --all-groups
-uv run python --version
-```
-
-Python commands should be executed using `uv run` to ensure the correct project environment is active.
-
-### Docker
-
-Docker provides isolated runtime environments for application services.
-
-The Docker environment will:
-
-- Use the project's Python version.
-- Install dependencies from `pyproject.toml` and `uv.lock`.
-- Preserve CPU-only PyTorch compatibility.
-- Avoid copying the developer's local `.venv`.
-- Exclude secrets and unnecessary local artifacts.
-- Use persistent volumes for required database and tracking data.
-
-The local `uv` environment and Docker environment share dependency definitions but remain separate runtime environments.
-
-## 10. Testing Architecture
-
-Testing will use pytest.
-
-The testing structure separates:
-
-- Unit tests.
-- Integration tests.
-- Prediction tests.
-
-Testing must cover preprocessing, feature transformation, model interfaces, training behaviour, evaluation calculations, inference and application integration.
-
-Expensive transformer training and large dataset downloads must not run as part of ordinary unit-test execution.
-
-## 11. CI/CD Architecture
-
-GitHub Actions will automate project quality checks.
-
-The continuous integration pipeline will eventually include:
-
-- Dependency and lockfile validation.
-- Ruff linting.
-- Ruff formatting validation.
-- mypy static typing.
-- pytest execution.
-- Coverage reporting.
-- Package and Docker build validation.
-
-The release pipeline will build and publish versioned container images to GitHub Container Registry after successful validation.
-
-Production deployment will only be introduced after the hosting environment, secrets, security requirements, migration strategy and rollback procedures have been defined.
-
-## 12. Development Strategy
-
-Development follows a phased, ML-first and integration-first approach.
-
-The implementation order is:
-
-1. Repository and architecture foundation.
-2. Dataset engineering.
-3. Text preprocessing and feature engineering.
-4. Classical machine learning.
-5. Model evaluation and experimental framework.
-6. Neural network models.
-7. Transformer experiments.
-8. Comparative research analysis.
-9. MLflow integration.
-10. PostgreSQL persistence.
-13. Application integration.
-14. Docker containerisation.
-15. GitHub CI/CD.
-16. Final validation and academic reporting.
-
-
-## 13. Architecture Change Control
-
-This architecture is the approved project baseline.
-
-Any proposed structural or technology change must be reviewed before implementation.
-
-The rationale, alternatives, trade-offs, consequences and migration requirements must be documented.
-
-The repository architecture must not change silently.
-
-## 14. Conclusion
-
-TopicSense-NLP adopts a modular, reproducible and resource-aware architecture that integrates supervised NLP research with a practical application.
-
-The design prioritises research integrity, maintainability, controlled experimentation and measurable system performance.
+Its architecture reflects the completed research scope: dataset engineering, classical machine learning, neural networks, transformer experiments, model comparison and error analysis.

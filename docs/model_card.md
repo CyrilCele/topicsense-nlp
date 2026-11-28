@@ -1,200 +1,165 @@
 # TopicSense-NLP — Model Card
 
-**Document status:** Initial template — Model development pending  
-**Version:** 1.0.0
-
 ## 1. Model Overview
 
-TopicSense-NLP will contain multiple supervised text classification models.
+**Project:** TopicSense-NLP  
+**Task:** Supervised multi-class text classification  
+**Dataset:** 20 Newsgroups  
+**Number of classes:** 20  
+**Project version:** 1.0.0
 
-The purpose of this document is to describe model design, intended use, evaluation, limitations and operational considerations.
+TopicSense-NLP investigates multiple model families for assigning documents to predefined newsgroup categories.
 
-A separate model entry should be maintained for every materially different trained model or model version.
+The project evaluates classical machine-learning algorithms, neural networks and transformer-based approaches.
 
-## 2. Model Inventory
+This model card documents the evaluated model families and the strongest recorded validation configuration.
 
-| Model | Family | Status |
-|---|---|---|
-| Multinomial Naive Bayes | Classical ML | Planned |
-| Logistic Regression | Classical ML | Planned |
-| Linear SVM | Classical ML | Planned |
-| TextCNN | Neural network | Planned |
-| Bidirectional LSTM | Neural network | Conditional |
-| DistilBERT | Transformer | Planned |
-| Frozen transformer embeddings | Transformer representation | Optional |
+## 2. Intended Task
 
-No model is considered trained or validated merely because it appears in this inventory.
+The classification task is to predict one of 20 predefined topic categories from the text of a newsgroup document.
 
-## 3. Intended Use
+The task is supervised because model training uses documents associated with known category labels.
 
-The intended primary use is supervised multi-class classification of textual documents into predefined topic categories.
+The project investigates:
 
-Potential application capabilities include:
-
-- Single-document topic prediction.
-- Batch document classification.
-- Prediction confidence or scores where supported.
+- Document classification.
+- Multi-class text categorisation.
 - Model comparison.
-- Analytical reporting.
+- Text representation.
+- Classification error analysis.
 
-The system is intended for research, experimentation and demonstration.
+## 3. Evaluated Model Families
 
-It is not intended to make high-stakes decisions without additional validation and safeguards.
+### 3.1 Classical Machine Learning
 
-## 4. Training Data
+The classical models include:
 
-For each model, document:
+- Multinomial Naive Bayes.
+- Logistic Regression.
+- Linear Support Vector Machine.
 
-- Dataset name and version.
-- Dataset source.
-- Licence.
-- Training split identifier.
-- Class distribution.
-- Preprocessing configuration.
-- Feature representation.
-- Random seed.
+The experiments use Bag-of-Words and TF-IDF representations.
 
-Dataset details must reference the corresponding dataset documentation.
+Both full-message and message-body text are considered.
 
-## 5. Model Architecture
+### 3.2 Neural Networks
 
-Record the relevant architecture and configuration.
+The neural architectures include:
 
-For classical models:
+- TextCNN.
+- Bidirectional LSTM (BiLSTM).
 
-- Algorithm.
-- Feature extraction method.
-- Vocabulary configuration.
-- Regularisation or smoothing parameters.
-- Class weighting, if used.
+These approaches investigate learned neural representations for document classification.
 
-For neural models:
+### 3.3 Transformer-Based Models
 
-- Embedding configuration.
-- Architecture.
-- Optimiser.
-- Learning rate.
-- Batch size.
-- Epoch count.
-- Regularisation.
-- Early stopping configuration.
+The transformer approaches include:
 
-For transformer models:
+- Fine-tuned DistilBERT.
+- Frozen `sentence-transformers/all-MiniLM-L6-v2` embeddings with Logistic Regression.
 
-- Model identifier.
-- Pretrained checkpoint.
-- Tokeniser.
-- Maximum sequence length.
-- Fine-tuning configuration.
-- Training hardware.
-- Runtime and memory measurements.
+The first approach adapts a pretrained transformer to the classification task.
 
-## 6. Evaluation
+The second approach uses fixed sentence embeddings as input to a separate classifier.
 
-Each model must be evaluated using held-out data.
+## 4. Selected Validation Configuration
 
-Required metrics:
+The strongest recorded validation configuration is:
+
+**Linear Support Vector Machine with TF-IDF features using full-message text.**
+
+Its recorded validation metrics are:
+
+| Metric | Validation result |
+|---|---:|
+| Accuracy | 91.47% |
+| Macro F1-score | 0.9138 |
+
+These figures are validation results.
+
+They must not be represented as official test-set performance.
+
+## 5. Training and Evaluation Data
+
+The dataset partitions are:
+
+| Partition | Documents | Purpose |
+|---|---:|---|
+| Development training | 9,051 | Model fitting |
+| Validation | 2,263 | Model comparison and error analysis |
+| Official test | 7,532 | Separate held-out evaluation |
+
+The official test partition is kept separate from model selection.
+
+## 6. Evaluation Metrics
+
+The project evaluates classification performance using:
 
 - Accuracy.
-- Macro precision.
-- Macro recall.
+- Precision.
+- Recall.
 - Macro F1-score.
-- Weighted F1-score.
-- Per-class precision, recall and F1-score.
-- Confusion matrix.
+- Confusion matrices.
+- Class-level classification reports.
 
-Additional metrics may include:
+Macro F1-score provides a class-balanced perspective by calculating performance across categories without weighting them by their support.
 
-- Calibration.
-- Inference latency.
-- Throughput.
-- Training duration.
-- Memory usage.
-- Artifact size.
+## 7. Intended Use
 
-Actual metric values must only be entered after the relevant evaluation has been completed.
+The evaluated models are intended for research and educational investigation of supervised text classification.
 
-## 7. Performance Record
+Potential applications within the scope of the research include:
 
-| Metric | Result |
-|---|---|
-| Accuracy | Pending evaluation |
-| Macro precision | Pending evaluation |
-| Macro recall | Pending evaluation |
-| Macro F1-score | Pending evaluation |
-| Weighted F1-score | Pending evaluation |
-| Training duration | Pending measurement |
-| Inference latency | Pending measurement |
-| Peak memory | Pending measurement |
-| Artifact size | Pending measurement |
+- Categorising documents by topic.
+- Comparing classification algorithms.
+- Investigating text representations.
+- Studying model errors.
+- Evaluating multi-class classification approaches.
+
+The reported performance applies to the documented dataset and experimental conditions.
 
 ## 8. Limitations
 
-Potential model limitations include:
+The models have several important limitations:
 
-- Dependence on training-data quality.
-- Class imbalance.
-- Domain shift.
-- Vocabulary mismatch.
-- Ambiguous documents.
-- Out-of-domain inputs.
-- Computational limitations.
-- Differences in confidence-score interpretation across model families.
+- They are evaluated on the 20 Newsgroups dataset.
+- The dataset consists of historical Usenet discussions.
+- The models may not generalise to contemporary communication or unrelated domains.
+- Classification performance can be influenced by document headers, quoted text and signatures.
+- Similar documents and duplicated content can affect evaluation if data partitions are not properly controlled.
+- Aggregate metrics do not fully describe class-specific errors.
+- Validation performance does not establish independent official test-set performance.
 
-These limitations must be evaluated and refined after training.
+## 9. Ethical Considerations
 
-## 9. Bias and Fairness Considerations
+The models classify documents according to topic categories.
 
-Training data may contain historical, demographic, cultural or domain-specific biases.
+They are not designed to identify authors, infer personal characteristics or make decisions about individuals.
 
-Evaluation should investigate whether model errors are concentrated in particular classes or text categories.
+Predictions should be interpreted as automated topic classifications rather than definitive assessments of document meaning or author intent.
 
-The system must not be assumed to be unbiased merely because it achieves high aggregate accuracy.
+## 10. Reproducibility
 
-## 10. Confidence and Prediction Interpretation
+Reproducibility is supported by:
 
-Prediction scores must be interpreted according to the underlying model.
+- Version-controlled source code.
+- Configuration files.
+- Documented dataset partitions.
+- The `uv.lock` dependency lockfile.
+- Sequential research notebooks.
+- Reusable model implementations.
+- Consistent evaluation procedures.
 
-Probabilities from probabilistic classifiers, calibrated probabilities and raw decision scores are not interchangeable.
+## 11. Appropriate Interpretation
 
-Where confidence is exposed to users, its meaning and limitations must be documented.
+The validation results demonstrate performance under the documented experimental conditions.
 
-## 11. Model Versioning and Tracking
+They should not be interpreted as evidence of universal text-classification performance.
 
-Model records should include:
+Independent evaluation on additional datasets would be necessary before making claims about generalisation beyond the 20 Newsgroups benchmark.
 
-- Model name.
-- Model version.
-- Training run identifier.
-- Dataset and split.
-- Configuration.
-- Evaluation metrics.
-- Artifact location.
-- Creation timestamp.
-- Software environment.
+## 12. Conclusion
 
-MLflow will provide experiment tracking and model lifecycle integration.
+TopicSense-NLP provides a comparative investigation of classical machine learning, neural networks and transformer-based approaches to supervised multi-class text classification.
 
-## 12. Computational Requirements
-
-The project targets CPU-only development.
-
-Classical models are expected to provide the initial reference points.
-
-Neural and transformer models must be evaluated with explicit resource limits.
-
-Actual runtime and memory requirements must be measured rather than assumed.
-
-## 13. Ethical and Operational Considerations
-
-Predictions are statistical estimates and may be incorrect.
-
-The application should provide appropriate warnings where classification confidence is weak or inputs fall outside the intended domain.
-
-Raw user text must not be retained unnecessarily.
-
-## 14. Model Status
-
-**Current status:** Model implementations and evaluations pending.
-
-This document defines the reporting standard for future models. It does not claim that any model has already been trained, evaluated or approved for deployment.
+The model card documents the evaluated approaches, intended task, validation results, limitations and appropriate interpretation of the findings.

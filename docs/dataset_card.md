@@ -1,42 +1,51 @@
 # TopicSense-NLP — Dataset Card
 
-**Document status:** Primary benchmark selected; local acquisition pending  
-**Version:** 1.1.0  
-**Last updated:** 24 November 2026
+**Dataset:** 20 Newsgroups  
+**Internal identifier:** `20newsgroups`  
+**Project version:** 1.0.0
 
 ## 1. Dataset Overview
 
-The primary benchmark selected for TopicSense-NLP is the **20 Newsgroups dataset**.
+TopicSense-NLP uses the 20 Newsgroups dataset as its supervised multi-class text classification benchmark.
 
-It is a collection of Usenet discussion documents organised into 20 newsgroup categories. It is suitable for supervised multi-class text classification.
+The dataset contains historical Usenet discussion documents grouped into 20 newsgroup categories.
 
-The dataset is distributed with an original training partition and an original test partition.
+Each document is associated with a predefined category label.
 
-## 2. Dataset Identification
+The dataset is used to investigate text classification, document representation, model comparison and classification errors.
 
-| Attribute | Value |
-|---|---|
-| Dataset name | 20 Newsgroups |
-| Internal identifier | `20newsgroups` |
-| Original source | https://people.csail.mit.edu/jrennie/20Newsgroups/ |
-| Acquisition interface | `sklearn.datasets.fetch_20newsgroups` |
-| Feature type | Text |
-| Language | English |
+## 2. Dataset Characteristics
+
+| Characteristic | Value |
+|---|---:|
+| Total documents | 18,846 |
 | Number of classes | 20 |
-| Total documented samples | 18,846 |
-| Original training samples | 11,314 |
-| Original test samples | 7,532 |
-| Domain | Usenet discussion posts |
-| Original split | Date-based |
-| Local format | JSON Lines |
-| Redistribution licence | Requires verification against original source |
+| Original training documents | 11,314 |
+| Original test documents | 7,532 |
+| Development training documents | 9,051 |
+| Validation documents | 2,263 |
+| Language | English |
+| Data modality | Text |
+| Classification type | Supervised multi-class |
 
-Dataset-level counts and partition details are documented by scikit-learn:
-https://scikit-learn.org/stable/datasets/real_world.html
+The development training and validation partitions originate from the original training partition.
 
-## 3. Topic Categories
+The official test partition remains separate from model selection.
 
-The dataset contains the following categories:
+## 3. Source and Acquisition
+
+The dataset is acquired using the scikit-learn `fetch_20newsgroups` interface.
+
+Original dataset information:
+
+- Original dataset source: https://people.csail.mit.edu/jrennie/20Newsgroups/
+- scikit-learn dataset documentation: https://scikit-learn.org/stable/datasets/real_world.html
+
+The acquisition and validation procedures are implemented through the project's data-ingestion functionality.
+
+## 4. Topic Categories
+
+The dataset contains the following 20 categories:
 
 1. `alt.atheism`
 2. `comp.graphics`
@@ -59,161 +68,117 @@ The dataset contains the following categories:
 19. `talk.politics.misc`
 20. `talk.religion.misc`
 
-## 4. Acquisition Strategy
+## 5. Data Organisation
 
-The dataset will be acquired using the scikit-learn dataset loader.
+The repository organises the dataset into three processing stages:
 
-The original training and test partitions will be preserved.
-
-The acquisition configuration uses:
-
-- `remove=()` to retain the original document content.
-- `shuffle=False` to preserve deterministic source ordering.
-- The original `train` and `test` subsets.
-- A dedicated local cache directory.
-
-No text cleaning, tokenisation, stopword removal or feature extraction will occur during acquisition.
-
-## 5. Local Storage
-
-The intended storage layout is:
-
-```text
-data/
-└── raw/
-    └── 20newsgroups/
-        ├── cache/
-        ├── 20newsgroups_raw.jsonl
-        └── 20newsgroups_manifest.json
-```
-
-The raw JSONL file stores:
-
-- Record identifier.
-- Dataset identifier.
-- Original source partition.
-- Original document text.
-- Category name.
-- Numeric category identifier.
-- SHA-256 content hash.
-
-The manifest records dataset metadata, class distribution, source partition counts, retrieval timestamp, software version and raw file checksum.
-
-## 6. Licensing and Redistribution
-
-The dataset is publicly obtainable through the documented source and scikit-learn loader.
-
-However, the existence of a public download does not establish unrestricted redistribution rights for the original Usenet posts.
-
-The redistribution licence and applicable original terms must be verified before redistributing the raw corpus.
-
-Until then:
-
-- Raw documents remain outside Git.
-- Raw documents are not included in published project archives.
-- Dataset source attribution is retained.
-- Redistribution restrictions are treated as unresolved.
-
-## 7. Data Quality Assessment
-
-The following checks will be performed after acquisition:
-
-- Total document count.
-- Category count.
-- Per-category distribution.
-- Empty or whitespace-only documents.
-- Missing labels.
-- Invalid records.
-- Exact duplicate documents.
-- Duplicate documents across original partitions.
-- Document length distribution.
-- Encoding and text integrity.
-
-Observed values will be recorded after the validation process has been executed.
-
-## 8. Metadata and Potential Leakage
-
-The original documents may contain:
-
-- Newsgroup headers.
-- Author or sender information.
-- Signatures.
-- Quoted messages.
-- Email addresses and other metadata.
-
-Some metadata may reveal the target category without representing the actual topic of the document.
-
-The original text will therefore be preserved during acquisition.
-
-Later experiments will compare controlled text representations, including metadata-preserving and metadata-reduced variants.
-
-The results must distinguish genuine topic classification performance from performance that may rely on metadata.
-
-## 9. Splitting Strategy
-
-The original dataset provides a training partition and a test partition.
-
-The project will preserve the original test partition for final evaluation.
-
-The original training partition will subsequently be divided into training and validation subsets using stratified splitting, subject to class representation.
-
-The validation set will support model selection and hyperparameter optimisation.
-
-The original test set must not be used during training or model selection.
-
-Duplicate and near-duplicate analysis must be completed before finalising the evaluation protocol.
-
-## 10. Cross-Domain Research
-
-20 Newsgroups will serve as the primary benchmark.
-
-Additional datasets will be evaluated separately for cross-domain experiments.
-
-Candidate datasets must have:
-
-- Documented provenance.
-- A verifiable licence or usage policy.
-- Labelled textual records.
-- Sufficient class representation.
-- A defensible relationship between their topic categories and the primary benchmark.
-
-Datasets will not be merged merely to increase sample count.
-
-## 11. Ethical and Privacy Considerations
-
-The corpus consists of historical discussion posts.
-
-The project will avoid unnecessary exposure of personal information contained in headers, signatures or document bodies.
-
-Raw text will not be exposed through the application by default.
-
-## 12. Acquisition Record
-
-| Field | Recorded value |
+| Directory | Purpose |
 |---|---|
-| Acquisition status | Pending execution |
-| Acquisition date | Pending |
-| scikit-learn version | Pending |
-| Actual document count | Pending |
-| Actual class count | Pending |
-| Training partition count | Pending |
-| Test partition count | Pending |
-| Raw file SHA-256 | Pending |
-| Exact duplicate count | Pending |
-| Licence verification | Pending |
+| `data/raw/` | Acquired source data |
+| `data/interim/` | Intermediate processing outputs |
+| `data/processed/` | Prepared data and partition information |
 
-## 13. Limitations
+Processed split information is maintained in:
 
-Known dataset characteristics include historical Usenet content, domain-specific vocabulary and the potential for metadata leakage.
+`data/processed/20newsgroups/splits/`
 
-Additional limitations will be documented after inspecting the downloaded corpus.
+The split manifests include:
 
-The dataset is a benchmark, not a representative sample of all modern textual domains.
+- `official_training_split.json`
+- `decontaminated_training_split.json`
+- `preprocessing_split_manifest.json`
 
-## 14. Dataset Status
+These files support consistent partition handling throughout the research workflow.
 
-**Selected:** Yes  
-**Acquired locally:** Pending  
-**Validated:** Pending  
-**Approved for redistribution:** No — licence verification pending  
-**Approved for model training:** Pending validation and split preparation
+## 6. Data Splitting Strategy
+
+The original dataset provides separate training and test partitions.
+
+The original training partition is divided into:
+
+| Partition | Documents |
+|---|---:|
+| Development training | 9,051 |
+| Validation | 2,263 |
+| Total | 11,314 |
+
+The official test partition contains 7,532 documents.
+
+The development training partition is used for model fitting. The validation partition supports model comparison and error analysis.
+
+The official test partition is kept separate from model selection.
+
+## 7. Data Quality and Integrity
+
+Dataset preparation considers:
+
+- Missing or invalid document content.
+- Document duplication.
+- Label validity.
+- Class distribution.
+- Data partition integrity.
+- Potential overlap and contamination between partitions.
+
+Duplicate and contamination analysis supports the identification of potential data leakage.
+
+The project maintains split manifests to support consistent use of the prepared partitions.
+
+## 8. Text Representation
+
+The experiments investigate different representations of document text.
+
+These include:
+
+- Full-message text.
+- Message-body text.
+- Bag-of-Words features.
+- TF-IDF features.
+- Transformer-based representations.
+- Sentence Transformer embeddings.
+
+Different representations are evaluated within the corresponding modelling experiments.
+
+## 9. Intended Uses
+
+The dataset supports research into:
+
+- Supervised text classification.
+- Multi-class document categorisation.
+- Classical machine-learning baselines.
+- Neural text classification.
+- Transformer-based text classification.
+- Text representation comparisons.
+- Classification error analysis.
+
+## 10. Limitations and Considerations
+
+The 20 Newsgroups dataset has several limitations:
+
+- It represents historical Usenet discussions rather than contemporary online communication.
+- Its topic categories do not represent all possible document classification domains.
+- Some documents contain headers, signatures and quoted material that can influence classification.
+- Historical vocabulary and communication conventions may differ from modern text.
+- The dataset may contain duplicated or closely related documents.
+- Performance on this dataset does not establish generalisation to unrelated datasets or domains.
+
+Results should therefore be interpreted within the context of the dataset and experimental design.
+
+## 11. Ethical Considerations
+
+The dataset contains historical user-generated text.
+
+Although it is used for academic and technical research, its content should be treated responsibly.
+
+Classification results should not be interpreted as reliable assessments of individual authors, their identities or their personal characteristics.
+
+## 12. References
+
+- Lang, K. (1995). NewsWeeder: Learning to filter netnews. *Proceedings of the 12th International Conference on Machine Learning*.
+- scikit-learn documentation: https://scikit-learn.org/stable/datasets/real_world.html
+- Original 20 Newsgroups dataset: https://people.csail.mit.edu/jrennie/20Newsgroups/
+
+## 13. Summary
+
+The 20 Newsgroups dataset provides the common experimental foundation for TopicSense-NLP.
+
+Its documented partitions, preprocessing procedures and quality assessments support consistent and reproducible supervised multi-class text classification experiments.
